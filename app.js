@@ -17,6 +17,7 @@ let isLetterOpen = false;
 let cameraOffset = { x: 0, y: 0, z: 0 }; // For blowout wobble camera zoom
 let blowoutOrbit = { angle: 0, scale: 1.0 }; // For blowout 360 orbit animation
 let cinematicCam = null; // Stores cinematic camera override position/target during tour
+let currentLyricIndex = -1;
 
 // Polaroid Letter Data Database
 const polaroidData = [
@@ -60,6 +61,35 @@ const polaroidData = [
         kicker: 'Memory 04',
         letterText: "Dear Biew-Biew,\n\nThis final core memory bb this is the symbolic day of our love we committed to each other the love we oath it might a normal day for other but for me this is the best day of my life I'm really happy on this day biew² \n\n like diko paka tou nga uyab nata it took 3 days to sink in that naa nakoy beautiful, pretty, majestic, cute, stunning and soo much more complementary words i can say my this work man ship making this website bb somehow make you happy, I love you my love thank you for being my Girlfriend I'm really grateful that you exist in such a cruel world.\n\nWith love, Always."
     }
+];
+
+// Synchronized Lyrics Database for "yung kai - blue" (approx. 3:34)
+const lyricsData = [
+    { time: 0, text: "🎵 (Instrumental Intro)" },
+    { time: 19.517, text: "Your morning eyes, I could stare like watching stars" },
+    { time: 26.769, text: "I could walk you by, and I'll tell without a thought" },
+    { time: 32.797, text: "You'd be mine, would you mind if I took your hand tonight?" },
+    { time: 40.850, text: "Know you're all that I want this life" },
+    { time: 48.330, text: "I'll imagine we fell in love" },
+    { time: 53.480, text: "I'll nap under moonlight skies with you" },
+    { time: 58.210, text: "I think I'll picture us, you with the waves" },
+    { time: 63.350, text: "The ocean's colors on your face" },
+    { time: 66.500, text: "I'll leave my heart with your air" },
+    { time: 68.200, text: "So let me fly with you" },
+    { time: 69.804, text: "Will you be forever with me?" },
+    { time: 75.000, text: "🎵 (Instrumental Bridge)" },
+    { time: 106.850, text: "My love will always stay by you" },
+    { time: 112.650, text: "I'll keep it safe, so don't you worry a thing, I'll tell you I love you more" },
+    { time: 121.520, text: "It's stuck with you forever, so promise you won't let it go" },
+    { time: 128.350, text: "I'll trust the universe will always bring me to you" },
+    { time: 136.810, text: "I'll imagine we fell in love" },
+    { time: 141.960, text: "I'll nap under moonlight skies with you" },
+    { time: 146.690, text: "I think I'll picture us, you with the waves" },
+    { time: 151.830, text: "The ocean's colors on your face" },
+    { time: 154.980, text: "I'll leave my heart with your air" },
+    { time: 156.680, text: "So let me fly with you" },
+    { time: 158.280, text: "Will you be forever with me?" },
+    { time: 164.000, text: "🎵 (Instrumental Outro)" }
 ];
 
 // Audio Elements
@@ -692,7 +722,7 @@ function initScrollAnimation() {
         start: "top top",
         end: "bottom top",
         onLeave: () => gsap.to(scrollIndicator, { opacity: 0, duration: 0.4 }),
-        onEnterBack: () => gsap.to(scrollIndicator, { opacity: 1, duration: 0.4 })
+        onEnterBack: () => updateScrollIndicatorVisibility()
     });
 
     // Mark sections as active/inactive to handle text card entries and active polaroid state
@@ -1081,14 +1111,72 @@ function triggerCinematicTour(wishCard) {
     });
 }
 
+// Manage visibility of the scroll indicator based on scroll position and music playing state
+function updateScrollIndicatorVisibility() {
+    const isAtTop = window.scrollY < 50;
+    if (bgMusic.paused && isAtTop) {
+        gsap.to(scrollIndicator, { opacity: 1, duration: 0.4 });
+    } else {
+        gsap.to(scrollIndicator, { opacity: 0, duration: 0.4 });
+    }
+}
+
+// Synchronize and update the lyrics display capsule based on current audio time
+function updateLyrics(time) {
+    let activeIdx = -1;
+    for (let i = 0; i < lyricsData.length; i++) {
+        if (time >= lyricsData[i].time) {
+            activeIdx = i;
+        } else {
+            break;
+        }
+    }
+
+    if (activeIdx !== currentLyricIndex) {
+        currentLyricIndex = activeIdx;
+        const currentLyric = lyricsData[activeIdx];
+        const nextLyric = lyricsData[activeIdx + 1];
+
+        const currentEl = document.querySelector('.lyrics-current');
+        const nextEl = document.querySelector('.lyrics-next');
+
+        if (currentEl && nextEl) {
+            gsap.to([currentEl, nextEl], {
+                opacity: 0,
+                y: -5,
+                duration: 0.2,
+                onComplete: () => {
+                    currentEl.textContent = currentLyric ? currentLyric.text : "";
+                    nextEl.textContent = nextLyric ? nextLyric.text : "";
+                    
+                    gsap.fromTo(currentEl, 
+                        { y: 5, opacity: 0 },
+                        { y: 0, opacity: 1, duration: 0.35, ease: "power2.out" }
+                    );
+                    gsap.fromTo(nextEl, 
+                        { y: 5, opacity: 0 },
+                        { y: 0, opacity: 0.6, duration: 0.35, ease: "power2.out" }
+                    );
+                }
+            });
+        }
+    }
+}
+
 // Audio Controls Toggle
 function setupAudioControls() {
+    const lyricsContainer = document.getElementById('lyrics-container');
+
     musicBtn.addEventListener('click', () => {
         if (bgMusic.paused) {
             bgMusic.volume = 0.5;
             bgMusic.play().then(() => {
                 soundWave.classList.add('playing');
                 musicBtn.querySelector('.music-text').textContent = "Pause Music";
+                if (lyricsContainer) {
+                    lyricsContainer.classList.add('visible');
+                }
+                updateScrollIndicatorVisibility();
             }).catch(err => {
                 console.error("Audio playback blocked", err);
             });
@@ -1096,7 +1184,26 @@ function setupAudioControls() {
             bgMusic.pause();
             soundWave.classList.remove('playing');
             musicBtn.querySelector('.music-text').textContent = "Play Music";
+            if (lyricsContainer) {
+                lyricsContainer.classList.remove('visible');
+            }
+            updateScrollIndicatorVisibility();
         }
+    });
+
+    // Manage lyrics capsule container and scroll indicator state with audio play/pause (redundant backup)
+    bgMusic.addEventListener('play', () => {
+        if (lyricsContainer) lyricsContainer.classList.add('visible');
+        updateScrollIndicatorVisibility();
+    });
+
+    bgMusic.addEventListener('pause', () => {
+        if (lyricsContainer) lyricsContainer.classList.remove('visible');
+        updateScrollIndicatorVisibility();
+    });
+
+    bgMusic.addEventListener('timeupdate', () => {
+        updateLyrics(bgMusic.currentTime);
     });
 }
 
