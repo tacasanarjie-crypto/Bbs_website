@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday! 🎂</title>
+
+    <!-- Meta tags for SEO & sharing -->
+    <meta name="description" content="A special, interactive 3D birthday cake experience with custom memory polaroids.">
+    <meta name="theme-color" content="#fbcfe8">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,500&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div id="loader" class="loader-container">
+        <div class="loader-content">
+            <div class="loader-cake">🎂</div>
+            <h2 class="loader-title">Baking something sweet...</h2>
+            <div class="loader-bar-bg">
+                <div class="loader-bar-fill"></div>
+            </div>
+            <p class="loader-hint">For the best experience, turn up your volume 🔊</p>
+        </div>
+    </div>
+
+    <!-- 3D Canvas Background -->
+    <canvas id="webgl"></canvas>
+
+    <!-- UI Overlay Controls -->
+    <header class="header-overlay">
+        <div class="brand">Happy Birthday Biew Biew ❤️‍🩹✨</div>
+        <button id="music-btn" class="control-btn music-btn" aria-label="Toggle Music">
+            <span class="music-icon">🎵</span>
+            <span class="music-text">Play Music</span>
+            <div class="sound-wave" id="sound-wave">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </button>
+    </header>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator" id="scroll-indicator">
+        <span class="mouse-icon"><span class="mouse-wheel"></span></span>
+        <span class="scroll-text">Scroll down to explore</span>
+    </div>
+
+    <!-- Scrollable content sections -->
+    <main class="scroll-container">
+        <!-- Section 1: Intro -->
+        <section class="scroll-section active" id="sec-intro">
+            <div class="story-card glass">
+                <span class="kicker">To My Most Beloved Person</span>
+                <h1>Happy Birthday!</h1>
+                <p>Today is all about celebrating you. I've gathered some of our sweetest memories around this special
+                    cake. Scroll down bb to take a look... 💫</p>
+            </div>
+        </section>
+
+        <!-- Section 2: Memory 1 -->
+        <section class="scroll-section" id="sec-mem1">
+            <div class="story-card glass polaroid-desc">
+                <span class="kicker">Memory 01</span>
+                <h2>Warm Gathering</h2>
+                <p class="handwritten">"Remember the cozy evening spent under the fairy lights, laughing until our
+                    stomachs hurt? Those are the moments I treasure most."</p>
+                <span class="click-hint">👉 Click the photo to read the full letter</span>
+            </div>
+        </section>
+
+        <!-- Section 3: Memory 2 -->
+        <section class="scroll-section" id="sec-mem2">
+            <div class="story-card glass polaroid-desc">
+                <span class="kicker">Memory 02</span>
+                <h2>Golden Sunsets</h2>
+                <p class="handwritten">"That sunset by the beach was magical. Watching the sky turn gold and pink,
+                    talking about everything and nothing. Let's chase more sunsets soon."</p>
+                <span class="click-hint">👉 Click the photo to read the full letter</span>
+            </div>
+        </section>
+
+        <!-- Section 4: Memory 3 -->
+        <section class="scroll-section" id="sec-mem3">
+            <div class="story-card glass polaroid-desc">
+                <span class="kicker">Memory 03</span>
+                <h2>Cozy Cafe Chats</h2>
+                <p class="handwritten">"Lattes, sweet pastries, and hours of conversations. You make the simplest
+                    afternoons feel like the most beautiful adventures."</p>
+                <span class="click-hint">👉 Click the photo to read the full letter</span>
+            </div>
+        </section>
+
+        <!-- Section 5: Memory 4 -->
+        <section class="scroll-section" id="sec-mem4">
+            <div class="story-card glass polaroid-desc">
+                <span class="kicker">Memory 04</span>
+                <h2>Candid Moments</h2>
+                <p class="handwritten">"Laughter, smiles, and capturing moments that will stay with us forever. Here's
+                    to more trips, more selfies, and more joy."</p>
+                <span class="click-hint">👉 Click the photo to read the full letter</span>
+            </div>
+        </section>
+
+        <!-- Section 6: Make a Wish / Blow Out Candles -->
+        <section class="scroll-section" id="sec-wish">
+            <div class="story-card glass wish-card">
+                <span class="kicker">Make a Wish</span>
+                <h2>Blow out the Candles!</h2>
+                <p>We're close enough now. Tap the button below (or click on the candles directly) to make your birthday
+                    wish and blow them out! 🎂✨</p>
+                <button id="blow-btn" class="blow-btn">
+                    <span class="sparkle-effect">💨</span> Blow Out Candles
+                </button>
+                <button id="relight-btn" class="relight-btn hidden">
+                    🔄 Light Them Again
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Polaroid Letter Overlay -->
+    <div id="letter-overlay" class="letter-overlay hidden">
+        <div class="letter-card glass">
+            <button id="close-letter-btn" class="close-letter-btn" aria-label="Close Letter">×</button>
+            <div class="letter-layout">
+                <!-- Left Side: Styled Polaroid Photo -->
+                <div class="letter-photo-side">
+                    <div class="modal-polaroid">
+                        <img id="modal-img" src="" alt="Memory Image">
+                        <div class="polaroid-caption" id="modal-caption">Memory 01</div>
+                    </div>
+                </div>
+                <!-- Right Side: Handwritten Letter -->
+                <div class="letter-body">
+                    <span class="letter-kicker" id="letter-kicker">Memory 01</span>
+                    <h2 id="letter-title" class="letter-title">Warm Gathering</h2>
+                    <p id="letter-content" class="handwritten-letter">"Remember the cozy evening..."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Audio Element -->
+    <audio id="bg-music" loop src="assets/here-there-and-everywhere.mp3"></audio>
+    <audio id="blow-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-extinguish-candle-blow-2070.mp3"></audio>
+    <audio id="cheer-sound"
+        src="https://assets.mixkit.co/sfx/preview/mixkit-small-group-cheer-and-applause-518.mp3"></audio>
+
+    <!-- CDNs -->
+    <!-- Three.js Core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP Core & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Main Script -->
+    <script src="app.js"></script>
+</body>
+
+</html>
