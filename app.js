@@ -22,43 +22,43 @@ let cinematicCam = null; // Stores cinematic camera override position/target dur
 const polaroidData = [
     {
         texturePath: 'assets/photo1.jpg',
-        title: 'Cozy Evening',
-        date: 'Warm Gathering',
+        title: 'Samgyup Date',
+        date: 'July 19 2025',
         angle: 0.0,            // Angle around cake
         height: 0.8,           // Y offset
         orbitRadius: 4.8,      // Distance from center
         kicker: 'Memory 01',
-        letterText: "Dear Special Someone,\n\nRemember that cozy evening spent under the fairy lights, laughing until our stomachs hurt? We talked about our biggest dreams and smallest fears. You have this magical way of making everyone around you feel warm and welcome.\n\nThank you for being the highlight of my year. I hope this birthday brings you as much joy as you bring to everyone else.\n\nWith love, Always."
+        letterText: "Dear Biew-Biew,\n\nRemember this date bb?  remeber our first samgyup? On this exact moment while im doing this its just like the time stops and i cant stop looking at you, I've really enjoy that date bb and really memorable jud kay first nako na samgyup joker lang kayu kay wla na hurot ang mga karne, anyways this date is really special to me bb thats why i put it here thank you for being with me on our date<3.\n\nWith love, Always."
     },
     {
         texturePath: 'assets/photo5.jpg',
-        title: 'Chasing Sunsets',
+        title: 'Beginning of a lifeline',
         date: 'Beach Magic',
         angle: Math.PI / 2,
         height: 1.4,
         orbitRadius: 4.5,
         kicker: 'Memory 02',
-        letterText: "Dear Special Someone,\n\nThat sunset by the beach was magical. Watching the sky turn gold and pink, talking about everything and nothing. \n\nI remember looking at you against the sunset and thinking how lucky I am to have you in my life. Let's chase more sunsets, explore new shores, and create a million more memories just like this one.\n\nWith love, Always."
+        letterText: "Dear Biew-Biew,\n\n Oh this date love it's so very special the time when nag aks ko sa imong permission to court you the first bouquet i gave to a girl  its just really important this memory biew², the day you met protasyo as well our bb protasyo if pwede palang ni ma balik na moment i will always come back and reminisce this core memory we have. \n\nWith love, Always."
     },
     {
-        texturePath: 'assets/photo4.jpg',
-        title: 'Sweet Chats',
+        texturePath: 'assets/photo2.jpg',
+        title: 'Sweet Smile',
         date: 'Coffee & Pastel',
         angle: Math.PI,
         height: 0.7,
         orbitRadius: 4.8,
         kicker: 'Memory 03',
-        letterText: "Dear Special Someone,\n\nLattes, sweet pastries, and hours of conversations. You make the simplest afternoons feel like the most beautiful adventures.\n\nI love how we can talk for hours about books, music, or absolutely nothing at all, and it still feels like the best use of time. Here's to more coffee dates and shared laughter.\n\nWith love, Always."
+        letterText: "Dear Biew-Biew,\n\n This date bb is also very special for me thats why its here like i can't describe how happy you are on this very special moment love this photo i took is exactly the way i describe this moment like the vibe is really different not to mention the ahem also i know you really love that bouquet love like look how happy you are, and you know that i always love you i always do bb.\n\nWith love, Always."
     },
     {
-        texturePath: 'assets/photo2.jpg',
-        title: 'Joyful Laughter',
+        texturePath: 'assets/photo4.jpg',
+        title: 'Memory of a commitment that never fade',
         date: 'Candid Smiles',
         angle: Math.PI * 1.5,
         height: 1.2,
         orbitRadius: 4.5,
         kicker: 'Memory 04',
-        letterText: "Dear Special Someone,\n\nLaughter, smiles, and capturing moments that will stay with us forever. Here's to more trips, more selfies, and more joy.\n\nThis picture captures exactly who you are to me: a ray of pure sunshine. Never lose that beautiful smile, and remember that I am always here for you.\n\nWith love, Always."
+        letterText: "Dear Biew-Biew,\n\nThis final core memory bb this is the symbolic day of our love we committed to each other the love we oath it might a normal day for other but for me this is the best day of my life I'm really happy on this day biew² \n\n like diko paka tou nga uyab nata it took 3 days to sink in that naa nakoy beautiful, pretty, majestic, cute, stunning and soo much more complementary words i can say my this work man ship making this website bb somehow make you happy, I love you my love thank you for being my Girlfriend I'm really grateful that you exist in such a cruel world.\n\nWith love, Always."
     }
 ];
 
@@ -588,7 +588,7 @@ function createPolaroidHeart() {
         const steps = 120;
         for (let i = 0; i <= steps; i++) {
             const t = (i / steps) * Math.PI * 2;
-            const x =  16 * Math.pow(Math.sin(t), 3);
+            const x = 16 * Math.pow(Math.sin(t), 3);
             // Positive y so lobes face UP (correct orientation)
             const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
             const z = zFn ? zFn(t) : 0;
@@ -636,7 +636,7 @@ function createPolaroidHeart() {
     // Overall group scale & tilt to match the screenshot angle
     group.scale.setScalar(0.92);
     group.rotation.x = -0.18;   // tilt top away from viewer slightly
-    group.rotation.z =  0.12;   // slight lean to the right
+    group.rotation.z = 0.12;   // slight lean to the right
     group.userData.isHeart = true;
     return group;
 }
@@ -911,8 +911,10 @@ function triggerBlowout() {
     // 1b. Hide the wish card so the camera tour isn't obscured
     const wishCard = document.querySelector('#sec-wish .story-card');
     if (wishCard) {
-        gsap.to(wishCard, { opacity: 0, scale: 0.92, duration: 0.4, ease: "power2.in",
-            onComplete: () => { wishCard.style.pointerEvents = 'none'; } });
+        gsap.to(wishCard, {
+            opacity: 0, scale: 0.92, duration: 0.4, ease: "power2.in",
+            onComplete: () => { wishCard.style.pointerEvents = 'none'; }
+        });
     }
 
     // 1c. Cinematic tour: orbit through each polaroid then return to top
